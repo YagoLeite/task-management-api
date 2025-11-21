@@ -12,3 +12,8 @@ export class CreateTaskDto {
     status: string;
     expirationDate: Date;
 }
+
+export interface FindAllParameters {
+    title: string;
+    status: string;
+}

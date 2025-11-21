@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException, Param } from '@nestjs/common';
-import { CreateTaskDto, TaskDto } from './task.dto';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { CreateTaskDto, FindAllParameters, TaskDto } from './task.dto';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -15,11 +15,23 @@ export class TaskService {
         return newTask;
     }
 
-    findAll(): TaskDto[] {
-        return this.tasks;
+    findAll(params: FindAllParameters): TaskDto[] {
+        return this.tasks.filter((t) => {
+            let match = true;
+
+            if (params.title != undefined && !t.title.includes(params.title)) {
+                match = false;
+            }
+
+            if (params.status != undefined && t.status !== params.status) {
+                match = false;
+            }
+
+            return match;
+        });
     }
 
-    findOne(@Param('id') id: string): TaskDto {
+    findById(id: string): TaskDto {
         const selectedTask = this.tasks.find((task) => task?.id === id);
 
         if (!selectedTask) {
@@ -47,5 +59,16 @@ export class TaskService {
 
     clearAll(): void {
         this.tasks = [];
+    }
+
+    remove(id: string) {
+        let taskIndex = this.tasks.findIndex((t) => t.id === id);
+
+        if (taskIndex >= 0) {
+            this.tasks.splice(taskIndex, 1);
+            return;
+        }
+
+        throw new HttpException(`Task with id: ${id} not found`, HttpStatus.BAD_REQUEST);
     }
 }
