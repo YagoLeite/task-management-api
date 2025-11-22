@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateTaskDto, FindAllParameters, TaskDto } from './task.dto';
-import * as crypto from 'crypto';
+import { CreateTaskDto, FindAllParameters, TaskDto, TaskStatusEnum } from './task.dto';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class TaskService {
@@ -8,8 +8,9 @@ export class TaskService {
 
     create(task: CreateTaskDto): TaskDto {
         const newTask: TaskDto = {
-            id: crypto.randomUUID(),
+            id: uuid(),
             ...task,
+            status: task?.status || TaskStatusEnum.TO_DO,
         };
         this.tasks.push(newTask);
         return newTask;
