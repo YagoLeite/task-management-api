@@ -5,7 +5,7 @@ import { hashSync as bcryptHashSync } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-    private readonly users: UserDto[] = [{ id: '1', username: 'user', password: '12345678' }];
+    private readonly users: UserDto[] = [{ id: '1', username: 'user', password: '1234' }];
 
     create(user: CreateUserDto) {
         const userAlreadyHere = this.users.filter((u) => u.username === user.username);
@@ -25,5 +25,9 @@ export class UsersService {
 
         this.users.push(newUser);
         return this.users;
+    }
+
+    findByUserName(username: string): UserDto | undefined {
+        return this.users.find((user) => user.username === username);
     }
 }
